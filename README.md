@@ -1,6 +1,6 @@
 # CodeAlpha Basic Network Sniffer
 
-Hello! My name is Abdullah AlliyaN also known as Allyan and This is my CodeAlpha Project Internship.
+Hello! My name is Abdullah Alliyan also known as Allyan and This is my CodeAlpha Project Internship.
 
 ## Overview
 
