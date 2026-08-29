@@ -4,17 +4,21 @@ Hello! My name is Abdullah AlliyaN also known as Allyan and This is my CodeAlpha
 
 ## Overview
 
-This is a Python-based network packet sniffer developed as part of the CodeAlpha Cyber Security Internship.
+A Python-based network packet sniffer developed as part of the CodeAlpha Cyber Security Internship.
+
+The project uses Scapy to capture and analyze network traffic in an authorized testing environment.
 
 ## Features
 
-- Captures network packets
+- Captures IP network packets
 - Displays source and destination IP addresses
-- Identifies network protocols
+- Identifies TCP, UDP and ICMP traffic
 - Displays source and destination ports
 - Displays packet size
-- Displays payload size (Doesn't print actual Payload which is intentional)
-- Provides timestamps and packet numbering
+- Displays payload size
+- Shows timestamps
+- Numbers captured packets
+- Provides protocol statistics
 
 ## Technologies
 
@@ -22,16 +26,15 @@ This is a Python-based network packet sniffer developed as part of the CodeAlpha
 - Scapy
 - Kali Linux
 
-## How to Run
+## Installation
 
 Install Scapy:
 
 ```bash
 sudo apt install python3-scapy
 
-## Run The Sniffer:
+USAGE
 
-sudo pythton3 sniffer.py 
+sudo python3 sniffer.py
 
-Press CTRL+C to Stop Packet capture.
-
+CTRL+C to Stop
