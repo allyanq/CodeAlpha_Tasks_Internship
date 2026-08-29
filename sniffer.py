@@ -1,51 +1,42 @@
-from scapy.all import sniff, IP, TCP, UDP, ICMP, Raw
+from scapy.all import sniff, IP, TCP, UDP, ICMP
 from datetime import datetime
-
+from collections import Counter
+import signal
+import sys
 
 packet_count = 0
-
-
-def get_protocol(packet):
-    if TCP in packet:
-        return "TCP"
-    elif UDP in packet:
-        return "UDP"
-    elif ICMP in packet:
-        return "ICMP"
-    else:
-        return "Other"
-
+protocol_counts = Counter()
 
 def packet_callback(packet):
-    global packet_count
+    global packet_count, protocol_counts
 
     if IP not in packet:
         return
 
     packet_count += 1
-
     source_ip = packet[IP].src
     destination_ip = packet[IP].dst
-    protocol = get_protocol(packet)
     packet_size = len(packet)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    source_port = "-"
-    destination_port = "-"
-
     if TCP in packet:
+        protocol = "TCP"
         source_port = packet[TCP].sport
         destination_port = packet[TCP].dport
-
     elif UDP in packet:
+        protocol = "UDP"
         source_port = packet[UDP].sport
         destination_port = packet[UDP].dport
+    elif ICMP in packet:
+        protocol = "ICMP"
+        source_port = "-"
+        destination_port = "-"
+    else:
+        protocol = "Other"
+        source_port = "-"
+        destination_port = "-"
 
-    payload_info = "No payload"
-
-    if Raw in packet:
-        payload_size = len(packet[Raw].load)
-        payload_info = f"{payload_size} bytes"
+    protocol_counts[protocol] += 1
 
     print("\n" + "=" * 55)
     print(f"Packet #{packet_count}")
@@ -57,19 +48,33 @@ def packet_callback(packet):
     print(f"Source Port : {source_port}")
     print(f"Dest Port   : {destination_port}")
     print(f"Packet Size : {packet_size} bytes")
-    print(f"Payload     : {payload_info}")
 
+def show_summary():
+    print("\n" + "=" * 55)
+    print("              CAPTURE SUMMARY")
+    print("=" * 55)
+    print(f"Total packets captured: {packet_count}")
+    print("\nProtocol Statistics:")
+    if protocol_counts:
+        for protocol, count in protocol_counts.items():
+            print(f"{protocol:<10}: {count}")
+    else:
+        print("No IP packets captured.")
+    print("=" * 55)
+    print("Packet capture stopped.")
+    print("=" * 55)
+
+def handle_exit(sig, frame):
+    show_summary()
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, handle_exit)
 
 print("=" * 55)
-print("        BASIC NETWORK SNIFFER")
+print("       CODEALPHA BASIC NETWORK SNIFFER")
 print("=" * 55)
 print("Capturing packets...")
 print("Press CTRL+C to stop.")
 print("=" * 55)
 
-try:
-    sniff(prn=packet_callback, store=False)
-
-except KeyboardInterrupt:
-    print("\n\nPacket capture stopped.")
-    print(f"Total packets captured: {packet_count}")
+sniff(prn=packet_callback, store=False)
